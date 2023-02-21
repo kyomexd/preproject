@@ -6,18 +6,19 @@ import jm.task.core.jdbc.util.Util;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-
+/**
+ * JDBC implementation of UserDao, allowing to work with DB through JDBC library methods
+ */
 public class UserDaoJDBCImpl implements UserDao {
     private Connection connection = Util.getSQLConnection();
 
     public void createUsersTable() {
-        try (PreparedStatement ps = connection.prepareStatement(
-                "CREATE TABLE IF NOT EXISTS users(" +
-                        "id SERIAL NOT NULL PRIMARY KEY," +
-                        "name varchar(225) NOT NULL," +
-                        "last_name varchar(225) NOT NULL," +
-                        "age smallint NOT NULL)")){
-            ps.executeUpdate();
+        try (Statement statement = connection.createStatement()){
+            statement.executeUpdate("CREATE TABLE IF NOT EXISTS users(" +
+                    "id SERIAL NOT NULL PRIMARY KEY," +
+                    "name varchar(225) NOT NULL," +
+                    "last_name varchar(225) NOT NULL," +
+                    "age smallint NOT NULL)");
         }
         catch (SQLException sqle) {
             System.out.println("Couldn't create table: " + sqle.getMessage());
@@ -25,9 +26,8 @@ public class UserDaoJDBCImpl implements UserDao {
     }
 
     public void dropUsersTable() {
-        try (PreparedStatement ps = connection.prepareStatement(
-                "DROP TABLE IF EXISTS users")){
-            ps.executeUpdate();
+        try (Statement statement = connection.createStatement()){
+            statement.executeUpdate("DROP TABLE IF EXISTS users");
         }
         catch (SQLException sqle) {
             System.out.println("Couldn't drop table: " + sqle.getMessage());

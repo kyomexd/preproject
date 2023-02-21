@@ -1,6 +1,13 @@
 package jm.task.core.jdbc.model;
 
 import javax.persistence.*;
+/**
+ * public class User
+ *
+ * User class represents a person entity, defined by their name, last name and age
+ *
+ * User can work with any JPA implementations, since persistence annotations are used
+ */
 
 @Entity
 @Table(name = "users")
@@ -21,7 +28,11 @@ public class User {
 
     public User() {
     }
-
+    /**
+     * @param name First name of a user
+     * @param lastName Last name of a user
+     * @param age Age of a user, represented by 1 byte
+     */
     public User(String name, String lastName, Byte age) {
         this.name = name;
         this.lastName = lastName;

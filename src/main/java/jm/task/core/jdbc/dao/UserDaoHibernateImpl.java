@@ -5,15 +5,15 @@ import jm.task.core.jdbc.util.Util;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
-
 import java.util.List;
-
+/**
+ * Hibernate implementation of UserDao, allowing to work with DB through Hibernate library methods
+ */
 public class UserDaoHibernateImpl implements UserDao {
     private SessionFactory sessionFactory = Util.getSessionFactory();
 
     public UserDaoHibernateImpl() {}
 
-    @Override
     public void createUsersTable() {
         Session session = sessionFactory.openSession();
         Transaction transaction = session.beginTransaction();
@@ -26,7 +26,6 @@ public class UserDaoHibernateImpl implements UserDao {
         session.close();
     }
 
-    @Override
     public void dropUsersTable() {
         Session session = sessionFactory.openSession();
         Transaction transaction = session.beginTransaction();
@@ -35,7 +34,6 @@ public class UserDaoHibernateImpl implements UserDao {
         session.close();
     }
 
-    @Override
     public void saveUser(String name, String lastName, byte age) {
         Session session = sessionFactory.openSession();
         Transaction transaction = session.beginTransaction();
@@ -45,27 +43,22 @@ public class UserDaoHibernateImpl implements UserDao {
         System.out.println("User с именем " + name + " добавлен в базу данных");
     }
 
-    @Override
     public void removeUserById(long id) {
         Session session = sessionFactory.openSession();
-        User user = (User) sessionFactory.openSession().get(User.class, id);
+        User user = (User) session.get(User.class, id);
         Transaction transaction = session.beginTransaction();
         session.delete(user);
         transaction.commit();
         session.close();
     }
 
-    @Override
     public List<User> getAllUsers() {
         Session session = sessionFactory.openSession();
-        Transaction transaction = session.beginTransaction();
-        List<User> users = session.createSQLQuery("SELECT * FROM users").addEntity(User.class).list();
-        transaction.commit();
+        List<User> users = session.createCriteria(User.class).list();
         session.close();
         return users;
     }
 
-    @Override
     public void cleanUsersTable() {
         Session session = sessionFactory.openSession();
         Transaction transaction = session.beginTransaction();
