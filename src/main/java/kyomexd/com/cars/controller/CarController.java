@@ -11,10 +11,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class CarController {
 
     @Autowired
-    CarService carService;
+    private CarService carService;
 
     @GetMapping("/cars")
-    public String getCars(@RequestParam(value = "count", defaultValue = "10") int count, Model model) {
+    public String getCars(@RequestParam(value = "count",   required = false) Integer count, Model model) {
         model.addAttribute("cars", carService.listCars(count));
         return "cars";
     }

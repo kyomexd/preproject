@@ -1,11 +1,25 @@
 package kyomexd.com.cars.model;
 
-public class Car {
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
+@NoArgsConstructor
+@Entity
+@Table(name = "cars")
+public class Car {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long id;
+
+    @Column
     private String model;
 
+    @Column
     private int series;
 
+    @Column
     private String color;
 
     public Car(String model, int series, String color) {
