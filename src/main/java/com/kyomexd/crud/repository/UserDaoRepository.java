@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public class UserRepository implements UserDao{
+public class UserDaoRepository implements UserDao{
 
     @Autowired
     private EntityManager entityManager;

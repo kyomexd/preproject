@@ -1,7 +1,7 @@
 package com.kyomexd.crud.service;
 
 import com.kyomexd.crud.model.User;
-import com.kyomexd.crud.repository.UserRepository;
+import com.kyomexd.crud.repository.UserDaoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -11,7 +11,7 @@ import java.util.List;
 public class UserServiceImpl implements UserService {
 
     @Autowired
-    private UserRepository userRepository;
+    private UserDaoRepository userRepository;
 
     @Override
     public List<User> getAllUsers() {
