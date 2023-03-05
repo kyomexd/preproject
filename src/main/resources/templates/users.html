@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>All users</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+  <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+</head>
+<body>
+<tr>
+  <th><a th:href="@{/signup}">Register new user</a> </th>
+</tr>
+<table border = "1">
+  <tr>
+    <th>Name</th>
+    <th>Age</th>
+    <th>Email</th>
+    <th>Update</th>
+    <th>Delete</th>
+  </tr>
+
+  <tr th:each="users : ${users}">
+    <td th:text="${users.name}">name</td>
+    <td th:text="${users.age}">age</td>
+    <td th:text="${users.email}">email</td>
+    <td><a th:href="@{/edit/{id}(id=${users.id})}"><button type="submit" class="btn btn-primary btn-block mt-2">Edit</button></a></td>
+    <td><a th:href="@{/delete/{id}(id=${users.id})}"><button type="submit" class="btn btn-primary btn-block mt-2">Delete</button></a></td>
+  </tr>
+</table>
+</body>
+</html>
