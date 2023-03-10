@@ -1,11 +1,18 @@
 package com.kyomexd.crud.controller;
 
+import com.kyomexd.crud.config.SecurityConfig;
+import com.kyomexd.crud.model.Role;
 import com.kyomexd.crud.model.User;
 import com.kyomexd.crud.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Collections;
 
 @Controller
 public class UserController {
@@ -13,48 +20,24 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @GetMapping("/")
-    public String redirectToUsers(Model model) {
-        return "redirect:/users";
-    }
-
-    @GetMapping("/users")
-    public String getAllUsers(Model model) {
-        model.addAttribute("users", userService.getAllUsers());
-        return "users";
-    }
-
     @GetMapping("/signup")
     public String signupUser(Model model) {
-        User user = new User();
-        model.addAttribute("user", user);
+        model.addAttribute("user", new User());
         return "signup";
     }
 
-    @PostMapping("/save")
-    public String saveUser(@ModelAttribute("user") User user, Model model) {
+    @PostMapping("/signup")
+    public String saveUser(@ModelAttribute("user") @Validated User user) {
+        user.setRoles(Collections.singleton(new Role(1L, "ROLE_USER")));
         userService.saveUser(user);
-        return "redirect:/users";
+        return "redirect:/user";
     }
 
-    @GetMapping("/delete/{id}")
-    public String deleteUser(@PathVariable int id, Model model) {
-        userService.deleteUser(id);
-        return "redirect:/users";
-    }
-
-    @GetMapping("/edit/{id}")
-    public String editUser(@PathVariable int id, Model model) {
-        User user = userService.findUserById(id);
+    @GetMapping("/user")
+    public String showUserpage(Model model) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        User user = (User) auth.getPrincipal();
         model.addAttribute("user", user);
-        return "edit";
+        return "/user";
     }
-
-    @PostMapping("/edit/{id}")
-    public String saveEditedUser(@ModelAttribute("user") User user, @PathVariable int id, Model model) {
-        userService.updateUser(id, user.getName(), user.getAge(), user.getEmail());
-        return "redirect:/users";
-    }
-
-
 }
