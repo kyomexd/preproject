@@ -3,9 +3,11 @@ package com.kyomexd.crud.repository;
 import com.kyomexd.crud.model.Role;
 import com.kyomexd.crud.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
 import java.util.Collections;
@@ -29,8 +31,14 @@ public class UserRepositoryImpl implements UserRepository {
     public User getUserByName(String name) {
         TypedQuery<User> query = entityManager.createQuery(
                 "SELECT u FROM User u WHERE u.name = :name", User.class);
-        return query.setParameter("name", name)
-                .getSingleResult();
+        User user = null;
+        try {
+            user = query.setParameter("name", name)
+                    .getSingleResult();
+        } catch (NoResultException e) {
+            throw new InternalAuthenticationServiceException("No user with such credentials. Please sign in again");
+        }
+        return user;
     }
 
     @Transactional
