@@ -7,6 +7,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.util.Collection;
@@ -35,6 +36,7 @@ public class User implements UserDetails {
     @Column(unique = true)
     @NotNull
     @NotEmpty
+    @Email
     private String email;
 
     @Column
@@ -45,6 +47,14 @@ public class User implements UserDetails {
     @ManyToMany(fetch = FetchType.EAGER)
     private Set<Role> roles;
 
+    public User(String name, int age, String email, String password, Set<Role> roles) {
+        this.name = name;
+        this.age = age;
+        this.email = email;
+        this.password = password;
+        this.roles = roles;
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return roles;
@@ -52,7 +62,7 @@ public class User implements UserDetails {
 
     @Override
     public String getUsername() {
-        return name;
+        return email;
     }
 
     @Override

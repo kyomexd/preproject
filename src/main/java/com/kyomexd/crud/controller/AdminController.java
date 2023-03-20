@@ -1,16 +1,22 @@
 package com.kyomexd.crud.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kyomexd.crud.model.Role;
 import com.kyomexd.crud.model.User;
+import com.kyomexd.crud.model.UserProfile;
 import com.kyomexd.crud.repository.RoleRepository;
 import com.kyomexd.crud.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
+import java.security.Principal;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -26,9 +32,18 @@ public class AdminController {
     private RoleRepository roleRepository;
 
     @GetMapping
-    public String getAllUsers(Model model) {
+    public String getAllUsers(Model model, Authentication auth) {
+        model.addAttribute("name", auth.getName());
+        model.addAttribute("roles", auth.getAuthorities());
         model.addAttribute("users", userService.getAllUsers());
+        model.addAttribute("user", new User());
         return "admin";
+    }
+
+    @GetMapping("/table")
+    @ResponseBody
+    public List<User> getUsersTable() {
+        return userService.getAllUsers();
     }
 
     @GetMapping("/add")
@@ -39,51 +54,42 @@ public class AdminController {
     }
 
     @PostMapping("/add")
-    public String saveUser(@ModelAttribute("user") @Validated User user,
-                           @RequestParam(defaultValue = "false") boolean role_user,
-                           @RequestParam(defaultValue = "false") boolean role_admin) {
+    @ResponseStatus(value = HttpStatus.OK)
+    public void saveUser(@RequestBody String userJson, BindingResult result) throws JsonProcessingException {
+        UserProfile profile = new ObjectMapper().readValue(userJson, UserProfile.class);
         Set<Role> roles = new HashSet<>();
-        if (role_user) {
+        if (profile.isHasUser()) {
             roles.add(new Role(1L, "ROLE_USER"));
         }
-        if (role_admin) {
+        if (profile.isHasAdmin()) {
             roles.add(new Role(2L, "ROLE_ADMIN"));
         }
-        user.setRoles(roles);
-        userService.saveUser(user);
-        return "redirect:/admin";
+        userService.saveUser(new User(profile.getName(), profile.getAge(), profile.getEmail(), profile.getPassword(), roles));
     }
 
     @GetMapping("/delete/{id}")
-    public String deleteUser(@PathVariable int id, Model model) {
+    public String deleteUser(@PathVariable int id) {
         userService.deleteUser(id);
         return "redirect:/admin";
     }
 
+    @ResponseBody
     @GetMapping("/edit/{id}")
-    public String editUser(@PathVariable int id, Model model) {
-        User user = userService.getUserById(id);
-        model.addAttribute("user", user);
-        model.addAttribute("roles", roleRepository.findAll());
-        return "edit";
+    public User editUser(@PathVariable int id) {
+        return userService.getUserById(id);
     }
 
+    @ResponseStatus(value = HttpStatus.OK)
     @PostMapping("/edit/{id}")
-    public String saveEditedUser(@ModelAttribute("user") User user,
-                                 @PathVariable int id,
-                                 @RequestParam(defaultValue = "false") boolean role_user,
-                                 @RequestParam(defaultValue = "false") boolean role_admin) {
+    public void saveEditedUser(@RequestBody String userJson) throws JsonProcessingException {
+        UserProfile profile = new ObjectMapper().readValue(userJson, UserProfile.class);
         Set<Role> roles = new HashSet<>();
-        if (role_user) {
+        if (profile.isHasUser()) {
             roles.add(new Role(1L, "ROLE_USER"));
         }
-        if (role_admin) {
+        if (profile.isHasAdmin()) {
             roles.add(new Role(2L, "ROLE_ADMIN"));
         }
-        if (!role_user && !role_admin) {
-            roles = userService.getUserById(id).getRoles();
-        }
-        userService.updateUser(id, user.getName(), user.getAge(), user.getEmail(), roles);
-        return "redirect:/admin";
+        userService.updateUser(profile.getId(), profile.getName(), profile.getAge(), profile.getEmail(), roles);
     }
 }

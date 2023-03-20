@@ -9,7 +9,9 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
@@ -35,7 +37,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/signup").not().fullyAuthenticated() // доступность всем
                 .antMatchers("/user").hasAnyRole("USER", "ADMIN")// разрешаем входить на /user пользователям с ролью User
                 .antMatchers("/admin/**").hasRole("ADMIN")
-                .antMatchers("/").permitAll()
+                .antMatchers("/", "/resources/**", "/static/**", "/folder/**").permitAll()
                 .anyRequest().authenticated()
                 .and().formLogin()
                 .successHandler(successUserHandler); // подключаем наш SuccessHandler для перенеправления по ролям
@@ -44,7 +46,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     // Необходимо для шифрования паролей
     // В данном примере не используется, отключен
     @Bean
-    public static NoOpPasswordEncoder passwordEncoder() {
-        return (NoOpPasswordEncoder) NoOpPasswordEncoder.getInstance();
+    public static PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 }

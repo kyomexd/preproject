@@ -5,11 +5,13 @@ import com.kyomexd.crud.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.stereotype.Repository;
+import org.springframework.validation.annotation.Validated;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
+import java.net.BindException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -28,12 +30,12 @@ public class UserRepositoryImpl implements UserRepository {
         return entityManager.find(User.class, id);
     }
 
-    public User getUserByName(String name) {
+    public User getUserByName(String email) {
         TypedQuery<User> query = entityManager.createQuery(
-                "SELECT u FROM User u WHERE u.name = :name", User.class);
+                "SELECT u FROM User u WHERE u.email = :email", User.class);
         User user = null;
         try {
-            user = query.setParameter("name", name)
+            user = query.setParameter("email", email)
                     .getSingleResult();
         } catch (NoResultException e) {
             throw new InternalAuthenticationServiceException("No user with such credentials. Please sign in again");
@@ -42,8 +44,11 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Transactional
-    public void addUser(User user) {
-        entityManager.persist(user);
+    public void addUser(@Validated User user) {
+
+            entityManager.persist(user);
+
+
     }
 
     @Transactional
