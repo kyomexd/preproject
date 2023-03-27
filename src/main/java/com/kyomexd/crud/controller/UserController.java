@@ -1,6 +1,9 @@
 package com.kyomexd.crud.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kyomexd.crud.config.SecurityConfig;
+import com.kyomexd.crud.model.Request;
 import com.kyomexd.crud.model.Role;
 import com.kyomexd.crud.model.User;
 import com.kyomexd.crud.service.UserService;
@@ -54,5 +57,13 @@ public class UserController {
         model.addAttribute("user", auth.getPrincipal());
         model.addAttribute("roles", auth.getAuthorities());
         return "/user";
+    }
+
+    @PostMapping("/request")
+    @ResponseBody
+    public void saveRequest(@RequestBody String requestJson) throws JsonProcessingException {
+        Request request = new ObjectMapper().readValue(requestJson, Request.class);
+        userService.updateRequests(userService.getUserByName(request.getUsername()), request);
+        userService.saveRequest(request);
     }
 }

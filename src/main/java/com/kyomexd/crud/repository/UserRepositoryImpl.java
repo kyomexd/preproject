@@ -1,5 +1,6 @@
 package com.kyomexd.crud.repository;
 
+import com.kyomexd.crud.model.Request;
 import com.kyomexd.crud.model.Role;
 import com.kyomexd.crud.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,7 @@ import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
 import java.net.BindException;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -45,24 +47,29 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Transactional
     public void addUser(@Validated User user) {
-
             entityManager.persist(user);
-
-
     }
 
     @Transactional
-    public void updateUser(int id, String name, int age, String email, Set<Role> roles) {
+    public void updateUser(int id, String name, String age, String email, String city, Set<Role> roles) {
         User foundUser = entityManager.find(User.class, id);
         foundUser.setName(name);
         foundUser.setAge(age);
         foundUser.setEmail(email);
         foundUser.setRoles(roles);
+        foundUser.setCity(city);
     }
 
     @Transactional
     public void deleteUser(int id) {
         User foundUser = entityManager.find(User.class, id);
         entityManager.remove(foundUser);
+    }
+
+    @Transactional
+    public void updateRequests(User user, Request request) {
+        Set<Request> requests = user.getRequests();
+        requests.add(request);
+        user.setRequests(requests);
     }
 }

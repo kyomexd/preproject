@@ -6,6 +6,10 @@
     <title>User Page</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
     <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>
+    <script th:src="@{/folder/userscripts.js}" type="text/javascript"></script>
     <style>
         body, html {
             height: 100%;
@@ -24,9 +28,51 @@
         </h3>
         roles:
         <th th:text="${roles}">roles</th>
+            <button type="button" class="btn btn-outline-warning btn-sm" th:if="${not #authorization.expression('hasRole(''ROLE_ADMIN'')')}" onclick="showRequestmodal()" style="float: bottom; display: block; align-items: center;">
+                Become admin
+            </button>
     </div>
 </header>
 <div class="container-fluid h-100">
+    <div class="modal fade" id="request" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+         aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" id="close-request-modal" class="close" data-dismiss="modal"
+                            aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" id="editUserBody" style="width:100%;text-align:center;display:inline-block;">
+                    <h2>Request form</h2>
+                    <form id="requestForm" method="post">
+                        <div class="form-row">
+                            <div class="col form-group" style="width:50%;text-align:center;display:inline-block;">
+                                <label>Email</label>
+                                <input type="text" id="email" class="form-control" th:field="${user.email}" disabled>
+                                <small class="form-text text-muted">
+                                    Your email
+                                </small>
+                            </div>
+                            </div>
+                        <div class="form-row">
+                            <div class="col form-group" style="width:100%; text-align:center; display:inline-block;">
+                                <label for="message">Message</label>
+                                <input type="text" id="message" class="form-control">
+                                <small class="form-text text-muted">
+                                    State your reasoning for becoming an admin
+                                </small>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="sendRequest" class="btn btn-dark editor" onclick="sendRequest()">Send request</button>
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="row h-100">
         <nav class="navbar navbar-dark bg-secondary" style="align-items: baseline">
             <div class="navbar-nav">
@@ -46,7 +92,7 @@
                 <tr>
                     <th>ID</th>
                     <th>Name</th>
-                    <th>Age</th>
+                    <th>Date of birth</th>
                     <th>Email</th>
                     <th>Role</th>
                 </tr>
@@ -64,5 +110,18 @@
         </nav>
     </div>
 </div>
+<script
+        src="https://code.jquery.com/jquery-3.6.4.min.js"
+        integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8="
+        crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-Piv4xVNRyMGpqkS2by6br4gNJ7DXjqk09RmUpJ8jgGtD7zP9yug3goQfGII0yAns"
+        crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"
+        integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN"
+        crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.min.js"
+        integrity="sha384-+YQ4JLhjyBLPDQt//I+STsc9iw4uQqACwlvpslubQzn4u2UU2UFM80nGisd026JF"
+        crossorigin="anonymous"></script>
 </body>
 </html>

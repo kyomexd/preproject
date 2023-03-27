@@ -8,9 +8,11 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Set;
 
 @RequiredArgsConstructor
@@ -31,7 +33,7 @@ public class User implements UserDetails {
 
     @Column
     @NotNull
-    private int age;
+    private String age;
 
     @Column(unique = true)
     @NotNull
@@ -44,15 +46,22 @@ public class User implements UserDetails {
     @NotEmpty
     private String password;
 
+    @Column
+    private String city;
+
     @ManyToMany(fetch = FetchType.EAGER)
     private Set<Role> roles;
 
-    public User(String name, int age, String email, String password, Set<Role> roles) {
+    @OneToMany(fetch = FetchType.EAGER, cascade = {CascadeType.ALL})
+    private Set<Request> requests;
+
+    public User(String name, String age, String email, String password, String city, Set<Role> roles) {
         this.name = name;
         this.age = age;
         this.email = email;
         this.password = password;
         this.roles = roles;
+        this.city = city;
     }
 
     @Override

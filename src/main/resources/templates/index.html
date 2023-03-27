@@ -3,9 +3,50 @@
 <head>
     <meta charset="UTF-8">
     <title>Front page</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+            integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+            crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous"/>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+            integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+            crossorigin="anonymous"></script>
+    <script type="text/javascript">
+        window.onload = function () {
+            OpenBootstrapPopup();
+        };
+
+        function OpenBootstrapPopup() {
+            $("#alertModal").modal('show');
+        }
+    </script>
+    <style>
+        a, a:hover, a:active {
+            color: rgba(255, 255, 255, 0.82)
+        }
+    </style>
 </head>
 <body>
-<td><a th:href="@{/signup}"><button type="submit" class="btn btn-primary btn-block mt-2">Sign Up</button></a></td>
-<td><a th:href="@{/login}"><button type="submit" class="btn btn-primary btn-block mt-2">Sign In</button></a></td>
+<div class="modal" id="alertModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+     aria-hidden="false">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+            </div>
+            <div class="modal-body" style="width:100%;text-align:center;display:inline-block;">
+                <h3> Welcome to the website! </h3>
+            </div>
+            <div class="modal-footer" style="width:100%;text-align:center;display:inline-block;">
+                <a th:href="@{/login}">
+                    <button type="submit" class="btn btn-primary">Login</button>
+                </a>
+                <a th:href="@{/signup}">
+                    <button type="submit" class="btn btn-primary">Register</button>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
 </body>
 </html>
