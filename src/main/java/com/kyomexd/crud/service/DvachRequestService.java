@@ -2,33 +2,54 @@ package com.kyomexd.crud.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.client.MultipartBodyBuilder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.HashMap;
 import java.util.Map;
 
 @Service
 public class DvachRequestService {
 
+    @Autowired
+    RestTemplate template;
+
+    @Autowired
+    ObjectMapper objectMapper;
+
+    @Value("${2chcaptcha_id}")
+    String captchaIdLink;
+
+    @Value("${2ch_posting}")
+    String postingLink;
+
     public String getCaptchaId() throws JsonProcessingException {
-        RestTemplate restTemplate = new RestTemplate();
-        ResponseEntity<String> response = restTemplate.getForEntity("https://2ch.hk/api/captcha/2chcaptcha/id?board=pr&thread=2653852", String.class);
-        Map<String, String> responseMap = new ObjectMapper().readValue(response.getBody(), Map.class);
+        ResponseEntity<String> response = template.getForEntity(captchaIdLink, String.class);
+        Map<String, String> responseMap = objectMapper.readValue(response.getBody(), Map.class);
         return responseMap.get("id");
     }
 
-    public String sendPost(String captchaId, String captchaValue, String comment) {
-        RestTemplate restTemplate = new RestTemplate();
+    public String sendPostWithLogs(String captchaId, String captchaValue, String comment) {
+        HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(createLogs(captchaId, captchaValue, comment), getPostHeaders());
+        ResponseEntity<String> responseEntity = template.postForEntity(postingLink, requestEntity, String.class);
+        return responseEntity.getBody();
+    }
+
+    private HttpHeaders getPostHeaders() {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+        return headers;
+    }
+
+    private MultiValueMap<String, String> createLogs(String captchaId, String captchaValue, String comment) {
         MultiValueMap<String, String> data = new LinkedMultiValueMap<>();
         data.add("task", "post");
         data.add("board", "pr");
@@ -44,10 +65,7 @@ public class DvachRequestService {
         data.add("2chcaptcha_id", captchaId);
         data.add("makaka_id", "");
         data.add("makaka_answer", "");
-        HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(data, headers);
-        ResponseEntity<String> responseEntity = restTemplate.postForEntity("https://2ch.hk/user/posting", requestEntity, String.class);
-        System.out.println(responseEntity.getBody());
-        return responseEntity.getBody();
+        return data;
     }
 
 

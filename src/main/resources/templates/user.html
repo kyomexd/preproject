@@ -9,6 +9,8 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.6.1/sockjs.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.js"></script>
     <script th:src="@{/folder/userscripts.js}" type="text/javascript"></script>
     <style>
         body, html {
@@ -18,19 +20,23 @@
 </head>
 <body>
 <header>
-    <div class="p-3 bg-dark text-white"><a th:href="@{/logout}">
-        <button type="submit" class="btn btn-outline-light" style="float: right; display: flex; align-items: center;">
-            Logout
-        </button>
-    </a>
+    <div class="p-3 bg-dark text-white">
+        <a th:href="@{/logout}">
+            <button type="submit" class="btn btn-outline-light"
+                    style="float: right; display: flex; align-items: center;">
+                Logout
+            </button>
+        </a>
         <h3>
             <th th:text="${user.email}">email</th>
         </h3>
         roles:
         <th th:text="${roles}">roles</th>
-            <button type="button" class="btn btn-outline-warning btn-sm" th:if="${not #authorization.expression('hasRole(''ROLE_ADMIN'')')}" onclick="showRequestmodal()" style="float: bottom; display: block; align-items: center;">
-                Become admin
-            </button>
+        <button th:if="${#lists.isEmpty(user.requests) and not #authorization.expression('hasRole(''ROLE_ADMIN'')')}" type="button" id="showRequestModal"
+                class="btn btn-outline-warning btn-sm" onclick="showRequestmodal()"
+                style="float: bottom; display: block; align-items: center;">
+            Become admin
+        </button>
     </div>
 </header>
 <div class="container-fluid h-100">
@@ -55,7 +61,7 @@
                                     Your email
                                 </small>
                             </div>
-                            </div>
+                        </div>
                         <div class="form-row">
                             <div class="col form-group" style="width:100%; text-align:center; display:inline-block;">
                                 <label for="message">Message</label>
@@ -68,7 +74,9 @@
                     </form>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" id="sendRequest" class="btn btn-dark editor" onclick="sendRequest()">Send request</button>
+                    <button type="button" id="sendRequest" class="btn btn-dark editor" onclick="sendRequest()">Send
+                        request
+                    </button>
                 </div>
             </div>
         </div>
@@ -99,7 +107,7 @@
                 </thead>
                 <tbody>
                 <tr th:each="users : ${user}">
-                    <td th:text="${user.id}">ID</td>
+                    <td th:text="${user.id}" id="user-id">ID</td>
                     <td th:text="${user.name}">name</td>
                     <td th:text="${user.age}">age</td>
                     <td th:text="${user.email}">email</td>

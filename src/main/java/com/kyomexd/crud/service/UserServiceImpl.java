@@ -3,6 +3,7 @@ package com.kyomexd.crud.service;
 import com.kyomexd.crud.model.Request;
 import com.kyomexd.crud.model.Role;
 import com.kyomexd.crud.model.User;
+import com.kyomexd.crud.model.UserDTO;
 import com.kyomexd.crud.repository.RequestRepository;
 import com.kyomexd.crud.repository.RoleRepository;
 import com.kyomexd.crud.repository.UserRepositoryImpl;
@@ -13,19 +14,13 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Service
 public class UserServiceImpl implements UserService, UserDetailsService {
 
     @Autowired
     private UserRepositoryImpl userRepository;
-
-    @Autowired
-    private RequestRepository requestRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -45,6 +40,26 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepository.addUser(user);
     }
+    @Override
+    public void saveNewUser(User user) {
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        Set<Role> roles = new HashSet<>();
+        roles.add(new Role(1L, "ROLE_USER"));
+        user.setRoles(roles);
+        userRepository.addUser(user);
+    }
+
+    @Override
+    public Set<Role> getDTORoles(UserDTO dto) {
+        Set<Role> roles = new HashSet<>();
+        if (dto.isHasUser()) {
+            roles.add(new Role(1L, "ROLE_USER"));
+        }
+        if (dto.isHasAdmin()) {
+            roles.add(new Role(2L, "ROLE_ADMIN"));
+        }
+        return roles;
+    }
 
     @Override
     public void updateUser(int id, String name, String age, String email, String city, Set<Role> roles) {
@@ -62,19 +77,6 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
-    public List<Request> getAllRequests() {
-        return requestRepository.findAll();
-    }
-
-    @Override
-    public void saveRequest(Request request) {
-        requestRepository.saveRequest(request);
-    }
-    @Override
-    public void resolveRequest(long id) {
-        requestRepository.resolveRequest(id);
-    }
-    @Override
     public User getUserByName(String name) {
         return userRepository.getUserByName(name);
     }
@@ -82,5 +84,10 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     @Override
     public void updateRequests(User user, Request request) {
         userRepository.updateRequests(user, request);
+    }
+
+    @Override
+    public void addRole(int id, Role role) {
+        userRepository.addRole(id, role);
     }
 }

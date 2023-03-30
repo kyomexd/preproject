@@ -16,4 +16,5 @@ public interface UserRepository {
     void updateUser(int id, String name, String age, String email, String city, Set<Role> roles);
     void deleteUser(int id);
     void updateRequests(User user, Request request);
+    void addRole(int id, Role role);
 }

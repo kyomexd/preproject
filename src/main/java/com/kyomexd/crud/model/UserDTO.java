@@ -1,15 +1,15 @@
 package com.kyomexd.crud.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
-import java.util.Date;
-
 @RequiredArgsConstructor
 @Getter
 @Setter
-public class UserProfile {
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class UserDTO {
     private int id;
     private String name;
     private String email;

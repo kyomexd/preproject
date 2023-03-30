@@ -1,19 +1,13 @@
-package com.kyomexd.crud.repository;
+package com.kyomexd.crud.service;
 
 import com.kyomexd.crud.model.Request;
-import com.kyomexd.crud.model.Role;
-import com.kyomexd.crud.model.User;
-import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
-import java.util.Set;
 
-public interface RequestRepository {
-
+public interface RequestService {
     List<Request> findAll();
     Request getRequestById(long id);
     void saveRequest(Request request);
     void resolveRequest(long id);
     int findAllPending();
-
 }

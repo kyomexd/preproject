@@ -20,6 +20,11 @@ public class RequestRepositoryImpl implements RequestRepository{
     }
 
     @Override
+    public int findAllPending() {
+        return entityManager.createQuery("SELECT r FROM Request r WHERE resolved = false").getResultList().size();
+    }
+
+    @Override
     public Request getRequestById(long id) {
         return entityManager.find(Request.class, id);
     }

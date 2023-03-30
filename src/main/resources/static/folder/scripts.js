@@ -1,4 +1,5 @@
 window.onload = function () {
+    getPendingRequests()
     $.ajax({
         method: 'GET',
         url: '/admin/table',
@@ -10,6 +11,52 @@ window.onload = function () {
             console.log(error);
         }
     })
+}
+
+var stompClient = null;
+
+var socket = new SockJS('/ws');
+stompClient = Stomp.over(socket);
+stompClient.connect({}, function (frame) {
+    console.log(frame);
+    stompClient.subscribe('/all/messages', function (result) {
+        let data = JSON.parse(result.body)
+        alertRequest(data.headers.simpUser.principal.email)
+    });
+});
+
+function getPendingRequests() {
+    $.ajax({
+        type: 'GET',
+        url: '/admin/requests/pending',
+        contentType: 'application/json',
+        async: false,
+        success: function (data) {
+            if (data !== 0) {
+                document.getElementById('alert_bar').innerHTML = "Requests " +
+                    "<i id='alert_icon' class='fa fa-exclamation' style='color: red'></i>"
+                console.log('have pending')
+            } else {
+                document.getElementById('alert_bar').innerHTML = "Requests"
+                console.log('no pending')
+            }
+        }
+    })
+}
+function alertRequest(email) {
+    hideAlertRequest()
+    document.getElementById('request-alert').style.display = "block"
+    document.getElementById('request-alert').innerHTML = "New request from user " + email +
+        "<button type='button' class='close' aria-label='Close' onclick='hideAlertRequest()'><span aria-hidden='true'>&times;</span></button>"
+    setTimeout(function () {
+        hideAlertRequest()
+    }, 5000)
+    refreshRequestsTable()
+    getPendingRequests()
+}
+
+function hideAlertRequest() {
+    document.getElementById('request-alert').style.display = "none"
 }
 function showPassword() {
     let togglePasswordShow = document.getElementById('show-password');
@@ -24,7 +71,6 @@ function showPassword() {
     togglePasswordHide.setAttribute("width", "16")
     togglePasswordHide.setAttribute("display", "block")
 }
-
 
 function hidePassword() {
     let togglePasswordShow = document.getElementById('show-password');
@@ -94,6 +140,7 @@ function refreshTable() {
 }
 
 function refreshRequestsTable() {
+    getPendingRequests()
     $("#all_requests_table td").remove();
     $.ajax({
         method: 'GET',
@@ -319,7 +366,7 @@ function showDeleteModal(data, roles) {
 function showCaptchaModal(requestid, requestemail, requestmsg, verdict) {
     $.ajax({
         type: 'GET',
-        url: 'admin/captcha',
+        url: '/dvach/captcha',
         success: function (id) {
             document.getElementById('captcha-id').value = requestid;
             document.getElementById('captcha-email').value = requestemail;
@@ -335,7 +382,7 @@ function showCaptchaModal(requestid, requestemail, requestmsg, verdict) {
 function refreshCaptcha() {
     $.ajax({
         type: 'GET',
-        url: 'admin/captcha',
+        url: '/dvach/captcha',
         async: false,
         success: function (id) {
             document.getElementById('captcha-img').src = "https://2ch.hk/api/captcha/2chcaptcha/show?id=" + id;
@@ -355,7 +402,7 @@ function sendDvachRequest() {
     let captchajson = JSON.stringify(captcha);
     $.ajax({
         type: 'POST',
-        url: '/admin/dvachi',
+        url: '/dvach/logs',
         data: captchajson,
         contentType: "application/json; charset=utf8",
         async: false,

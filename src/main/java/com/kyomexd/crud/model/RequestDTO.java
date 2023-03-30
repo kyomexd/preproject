@@ -7,9 +7,9 @@ import lombok.Setter;
 @RequiredArgsConstructor
 @Getter
 @Setter
-public class Captcha {
+public class RequestDTO {
 
-    private String id;
-    private String value;
-    private String comment;
+    private String username;
+    private String message;
+    private boolean resolved;
 }

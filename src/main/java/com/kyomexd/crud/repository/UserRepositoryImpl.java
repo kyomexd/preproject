@@ -47,7 +47,11 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Transactional
     public void addUser(@Validated User user) {
+        try {
             entityManager.persist(user);
+        } catch (RuntimeException e) {
+            throw new RuntimeException("User with these credentials already exists. Please choose other name/email");
+        }
     }
 
     @Transactional
@@ -71,5 +75,13 @@ public class UserRepositoryImpl implements UserRepository {
         Set<Request> requests = user.getRequests();
         requests.add(request);
         user.setRequests(requests);
+    }
+
+    @Transactional
+    public void addRole(int id, Role role) {
+        User user = entityManager.find(User.class, id);
+        Set<Role> roles = user.getRoles();
+        roles.add(role);
+        user.setRoles(roles);
     }
 }
