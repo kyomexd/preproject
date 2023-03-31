@@ -11,7 +11,7 @@ import java.util.List;
 public class RequestServiceImpl implements RequestService {
 
     @Autowired
-    RequestRepository repository;
+    private RequestRepository repository;
 
     @Override
     public List<Request> findAll() {

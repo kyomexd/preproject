@@ -13,7 +13,7 @@ import java.util.List;
 public class RequestRepositoryImpl implements RequestRepository{
 
     @Autowired
-    EntityManager entityManager;
+    private EntityManager entityManager;
     @Override
     public List<Request> findAll() {
         return entityManager.createQuery("SELECT r FROM Request r").getResultList();

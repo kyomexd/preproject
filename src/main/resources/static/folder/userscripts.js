@@ -22,7 +22,7 @@ function sendRequest() {
     let requestJson = JSON.stringify(request)
     $.ajax({
         method: 'POST',
-        url: "/user/requests/save",
+        url: "/requests/save",
         data: requestJson,
         contentType: "application/json; charset=utf8",
         success: function () {

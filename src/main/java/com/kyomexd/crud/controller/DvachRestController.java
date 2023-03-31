@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 public class DvachRestController {
 
     @Autowired
-    DvachRequestService dvachRequestService;
+    private DvachRequestService dvachRequestService;
 
     @GetMapping("/captcha")
     public String getCaptchaId() throws JsonProcessingException {

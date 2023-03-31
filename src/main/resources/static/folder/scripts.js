@@ -28,16 +28,17 @@ stompClient.connect({}, function (frame) {
 function getPendingRequests() {
     $.ajax({
         type: 'GET',
-        url: '/admin/requests/pending',
+        url: '/requests/pending',
         contentType: 'application/json',
         async: false,
         success: function (data) {
             if (data !== 0) {
                 document.getElementById('alert_bar').innerHTML = "Requests " +
-                    "<i id='alert_icon' class='fa fa-exclamation' style='color: red'></i>"
+                    "<i id='alert_icon' class='fa fa-circle' style='color: red'> " + data + " </i>"
                 console.log('have pending')
             } else {
-                document.getElementById('alert_bar').innerHTML = "Requests"
+                document.getElementById('alert_bar').innerHTML = "Requests " +
+                    "<i id='alert_icon' class='fa fa-circle' style='color: limegreen'></i>"
                 console.log('no pending')
             }
         }
@@ -144,7 +145,7 @@ function refreshRequestsTable() {
     $("#all_requests_table td").remove();
     $.ajax({
         method: 'GET',
-        url: '/admin/requests',
+        url: '/requests',
         contentType: 'application/json',
         success: function (response) {
             drawRequestTable(response)
@@ -296,7 +297,7 @@ function insertDeclineButton(id, email, message, resolved, parent) {
 function approveRequest(id) {
     $.ajax({
         method: 'POST',
-        url: "/admin/requests/accept/" + id.toString(),
+        url: "/requests/accept/" + id.toString(),
         success: function () {
             console.log('approved')
             refreshRequestsTable()
@@ -310,7 +311,7 @@ function approveRequest(id) {
 function declineRequest(id) {
     $.ajax({
         method: 'POST',
-        url: "/admin/requests/decline/" + id.toString(),
+        url: "/requests/decline/" + id.toString(),
         success: function () {
             console.log('declined')
             refreshRequestsTable()

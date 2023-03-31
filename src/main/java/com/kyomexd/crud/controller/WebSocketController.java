@@ -11,7 +11,7 @@ import org.springframework.stereotype.Controller;
 public class WebSocketController {
 
     @Autowired
-    SimpMessagingTemplate template;
+    private SimpMessagingTemplate template;
 
     @MessageMapping("/application")
     @SendTo("/all/messages")

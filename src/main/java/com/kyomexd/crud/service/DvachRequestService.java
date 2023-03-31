@@ -20,16 +20,16 @@ import java.util.Map;
 public class DvachRequestService {
 
     @Autowired
-    RestTemplate template;
+    private RestTemplate template;
 
     @Autowired
-    ObjectMapper objectMapper;
+    private ObjectMapper objectMapper;
 
     @Value("${2chcaptcha_id}")
-    String captchaIdLink;
+    private String captchaIdLink;
 
     @Value("${2ch_posting}")
-    String postingLink;
+    private String postingLink;
 
     public String getCaptchaId() throws JsonProcessingException {
         ResponseEntity<String> response = template.getForEntity(captchaIdLink, String.class);

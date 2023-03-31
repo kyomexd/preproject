@@ -20,7 +20,7 @@ import java.util.Set;
 @RequestMapping("/signup")
 public class SignupController {
     @Autowired
-    UserService userService;
+    private UserService userService;
 
     @GetMapping()
     public String signupUser(Model model) {
